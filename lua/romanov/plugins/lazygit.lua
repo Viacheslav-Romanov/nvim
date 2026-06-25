@@ -1,6 +1,4 @@
-local setup, lazygit = pcall(require, "lazygit")
-if not setup then
-	return
-end
-
-lazygit.setup()
+-- plugins/lazygit.lua
+-- kdheepak/lazygit.nvim is a Vimscript plugin; it registers :LazyGit/:LazyGitConfig
+-- commands automatically. There is no Lua setup() function to call.
+-- Keymaps are defined in core/keymaps.lua (<leader>gg).
