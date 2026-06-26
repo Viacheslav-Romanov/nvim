@@ -255,6 +255,84 @@ require("lazy").setup({
   },
 
 
+  -- ── Productivity boosters ─────────────────────────────────────────────────
+
+  -- Rust: inline crate version info + actions in Cargo.toml
+  {
+    "saecki/crates.nvim",
+    event = { "BufRead Cargo.toml" },
+    dependencies = { "nvim-lua/plenary.nvim" },
+    config = function() require("romanov.plugins.crates") end,
+  },
+
+  -- JavaScript: inline npm version info in package.json
+  {
+    "vuki656/package-info.nvim",
+    event = { "BufRead package.json" },
+    dependencies = { "MunifTanjim/nui.nvim" },
+    config = function() require("romanov.plugins.package-info") end,
+  },
+
+  -- Harpoon v2: bookmark 4 hot files per project, jump with Alt+1..4
+  {
+    "ThePrimeagen/harpoon",
+    branch       = "harpoon2",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    config       = function() require("romanov.plugins.harpoon") end,
+  },
+
+  -- Trouble v3: project-wide diagnostics panel
+  {
+    "folke/trouble.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    cmd          = "Trouble",
+    config       = function() require("romanov.plugins.trouble") end,
+  },
+
+  -- Diffview: two-panel git diff + full file history
+  {
+    "sindrets/diffview.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    cmd          = { "DiffviewOpen", "DiffviewFileHistory", "DiffviewClose" },
+    config       = function() require("romanov.plugins.diffview") end,
+  },
+
+  -- inc-rename: rename with live preview (replaces lspsaga rename)
+  {
+    "smjonas/inc-rename.nvim",
+    event  = { "BufReadPre", "BufNewFile" },
+    config = function() require("romanov.plugins.inc-rename") end,
+  },
+
+  -- Neogen: generate doc comment skeletons (Rustdoc / JSDoc / Doxygen / KDoc)
+  {
+    "danymat/neogen",
+    dependencies = { "nvim-treesitter/nvim-treesitter" },
+    cmd          = "Neogen",
+    config       = function() require("romanov.plugins.neogen") end,
+  },
+
+  -- Undotree: visual branching undo history
+  {
+    "mbbill/undotree",
+    cmd    = "UndotreeToggle",
+    config = function() require("romanov.plugins.undotree") end,
+  },
+
+  -- vim-illuminate: highlight all occurrences of word under cursor
+  -- Zero config — just shows you where else a symbol is used in the buffer
+  {
+    "RRethy/vim-illuminate",
+    event  = { "BufReadPre", "BufNewFile" },
+    config = function()
+      require("illuminate").configure({
+        delay       = 120,
+        filetypes_denylist = { "NvimTree", "alpha", "lazy", "mason", "TelescopePrompt" },
+      })
+    end,
+  },
+
+
 }, {
   ui = { border = "rounded" },
   performance = {

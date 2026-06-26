@@ -39,4 +39,11 @@ wk.add({
   { "<leader>s",  group = "Splits" },
   { "<leader>b",  group = "Buffers" },
   { "<leader>c",  group = "Quickfix" },
+  { "<leader>C",  group = "Crates (Cargo.toml)" },
+  { "<leader>N",  group = "NPM (package.json)" },
+  { "<leader>T",  group = "Trouble / Diagnostics" },
+  { "<leader>n",  group = "Doc / Neogen" },
+  { "<leader>a",  desc  = "Harpoon: Add file" },
+  { "<leader>l",  desc  = "Harpoon: Quick menu" },
+  { "<leader>u",  desc  = "Undotree: Toggle" },
 })
