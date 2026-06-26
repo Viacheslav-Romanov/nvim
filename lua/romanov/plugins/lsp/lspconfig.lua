@@ -126,7 +126,7 @@ local servers = {
 
 -- sourcekit (Swift): macOS only
 if vim.loop.os_uname().sysname == "Darwin" then
-  servers["sourcekit"] = { filetypes = { "swift", "objective-c", "objective-cpp" } }
+  servers["sourcekit"] = { filetypes = { "swift", "objc", "objcpp" } }
 end
 
 for name, cfg in pairs(servers) do
