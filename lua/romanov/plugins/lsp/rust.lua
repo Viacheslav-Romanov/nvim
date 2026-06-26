@@ -44,10 +44,19 @@ return {
     on_attach = on_attach,
     default_settings = {
       ["rust-analyzer"] = {
-        checkOnSave = { command = "clippy", extraArgs = { "--all-targets" } },
-        cargo       = { allFeatures = true, loadOutDirsFromCheck = true },
-        procMacro   = { enable = true },
-        inlayHints  = {
+        -- rust-analyzer 1.78+ changed checkOnSave from a map to a boolean.
+        -- The command and extra args now live under the `check` key.
+        checkOnSave = true,
+        check = {
+          command   = "clippy",
+          extraArgs = { "--all-targets" },
+        },
+        cargo = {
+          allFeatures          = true,
+          loadOutDirsFromCheck = true,
+        },
+        procMacro = { enable = true },
+        inlayHints = {
           lifetimeElisionHints = { enable = "skip_trivial" },
           typeHints            = { enable = true },
           parameterHints       = { enable = true },
@@ -55,5 +64,4 @@ return {
       },
     },
   },
-  -- dap: omitted — rustaceanvim auto-detects codelldb from mason
 }

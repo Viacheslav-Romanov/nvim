@@ -132,7 +132,8 @@ require("lazy").setup({
   -- init = sets vim.g.rustaceanvim BEFORE the plugin loads (required)
   {
     "mrcjkb/rustaceanvim",
-    version = "^5",
+    -- No version pin: always latest so nvim 0.12 API deprecations get patched
+    version = false,
     ft      = { "rust" },
     init    = function()
       vim.g.rustaceanvim = require("romanov.plugins.lsp.rust")
@@ -204,7 +205,26 @@ require("lazy").setup({
     config = function() require("romanov.plugins.xcodebuild") end,
   },
 
-  { "github/copilot.vim", event = "InsertEnter" },
+  {
+    "github/copilot.vim",
+    event = "InsertEnter",
+    config = function()
+      -- Disable Copilot's Tab mapping so nvim-cmp owns <Tab> exclusively.
+      vim.g.copilot_no_tab_map = true
+      -- Accept full suggestion:  Alt+L
+      vim.keymap.set("i", "<M-l>", function()
+        return vim.fn["copilot#Accept"]("")
+      end, { silent = true, expr = true, replace_keycodes = false,
+             desc = "Copilot: Accept suggestion" })
+      -- Cycle suggestions:  Alt+] / Alt+[
+      vim.keymap.set("i", "<M-]>", "<Plug>(copilot-next)",
+        { desc = "Copilot: Next suggestion" })
+      vim.keymap.set("i", "<M-[>", "<Plug>(copilot-prev)",
+        { desc = "Copilot: Prev suggestion" })
+      -- Trigger manually:  Alt+      vim.keymap.set("i", "<M-\>", "<Plug>(copilot-suggest)",
+        { desc = "Copilot: Trigger suggestion" })
+    end,
+  },
 
   {
     "MeanderingProgrammer/render-markdown.nvim",
@@ -225,7 +245,10 @@ require("lazy").setup({
   -- ── Startup dashboard ────────────────────────────────────────────────────
   {
     "goolord/alpha-nvim",
-    event = "VimEnter",
+    -- lazy = false: alpha must load at startup; using event="VimEnter" causes a
+    -- timing race where alpha's own VimEnter autocmd fires before lazy loads it.
+    lazy = false,
+    priority = 900,
     dependencies = { "nvim-tree/nvim-web-devicons" },
     config = function() require("romanov.plugins.alpha") end,
   },

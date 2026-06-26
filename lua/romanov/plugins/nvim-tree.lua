@@ -54,8 +54,13 @@ nvimtree.setup({
   },
   -- IMPROVED: show file size / modification time in the tree
   view = {
-    width = 30,
-    side  = "left",
+    -- Adaptive: 20% of terminal columns so it never dominates a narrow pane.
+    -- Absolute floor of 22 keeps it usable, ceiling of 35 prevents bloat.
+    width = function()
+      local cols = vim.opt.columns:get()
+      return math.max(22, math.min(35, math.floor(cols * 0.20)))
+    end,
+    side = "left",
   },
 })
 
