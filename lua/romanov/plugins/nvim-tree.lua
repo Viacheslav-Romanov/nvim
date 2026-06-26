@@ -54,7 +54,7 @@ nvimtree.setup({
   },
   -- IMPROVED: show file size / modification time in the tree
   view = {
-    width = 35,
+    width = 30,
     side  = "left",
   },
 })

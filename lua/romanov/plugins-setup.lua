@@ -222,6 +222,15 @@ require("lazy").setup({
     config       = function() require("todo-comments").setup() end,
   },
 
+  -- ── Startup dashboard ────────────────────────────────────────────────────
+  {
+    "goolord/alpha-nvim",
+    event = "VimEnter",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    config = function() require("romanov.plugins.alpha") end,
+  },
+
+
 }, {
   ui = { border = "rounded" },
   performance = {
