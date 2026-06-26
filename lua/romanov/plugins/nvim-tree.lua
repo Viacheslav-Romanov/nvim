@@ -1,80 +1,55 @@
 local setup, nvimtree = pcall(require, "nvim-tree")
-if not setup then
-  return
-end
+if not setup then return end
 
--- Disable netrw (nvim-tree replaces it)
-vim.g.loaded_netrw = 1
+vim.g.loaded_netrw       = 1
 vim.g.loaded_netrwPlugin = 1
 
--- Custom indent marker colour (matches nightfly palette)
 vim.cmd([[ highlight NvimTreeIndentMarker guifg=#3FC5FF ]])
 
 nvimtree.setup({
   renderer = {
     icons = {
       glyphs = {
-        folder = {
-          arrow_closed = "",
-          arrow_open   = "",
-        },
+        folder = { arrow_closed = "", arrow_open = "" },
       },
     },
-    -- IMPROVED: highlight git status in the file tree
-    highlight_git = true,
-    indent_markers = {
-      enable = true, -- show indent guide lines
-    },
+    highlight_git    = true,
+    indent_markers   = { enable = true },
   },
+
   actions = {
     open_file = {
-      window_picker = {
-        enable = false, -- needed for correct behaviour with splits
-      },
-      -- IMPROVED: resize nvim-tree when opening a file
-      resize_window = false,
+      window_picker  = { enable = false },
+      -- resize_window = true causes the tree to widen on open; keep it false.
+      resize_window  = false,
+      -- Quit the tree after opening a file (cleaner workflow)
+      quit_on_open   = false,
     },
   },
-  -- IMPROVED: keep the tree in sync with the active buffer
+
+  -- update_focused_file: when enable=true nvim-tree auto-reveals (and in some
+  -- versions auto-opens) the tree whenever you switch buffers.  This is what
+  -- was making the tree appear uninvited every time you opened a file.
   update_focused_file = {
-    enable    = true,
+    enable      = false,
     update_root = false,
-    ignore_list = {},
   },
-  -- IMPROVED: show git status icons
+
   git = {
     enable  = true,
-    ignore  = false, -- show git-ignored files (dimmed)
+    ignore  = false,
     timeout = 400,
   },
-  -- IMPROVED: filter dot-files but make it toggleable with 'H'
+
   filters = {
     dotfiles = false,
     custom   = { "^.git$" },
   },
-  -- IMPROVED: show file size / modification time in the tree
+
   view = {
-    -- Adaptive: 20% of terminal columns so it never dominates a narrow pane.
-    -- Absolute floor of 22 keeps it usable, ceiling of 35 prevents bloat.
-    width = function()
-      local cols = vim.opt.columns:get()
-      return math.max(22, math.min(35, math.floor(cols * 0.20)))
-    end,
-    side = "left",
+    -- Fixed width: the adaptive function was evaluated at open-time before the
+    -- window layout settled, producing a different (wider) value on first open.
+    width = 30,
+    side  = "left",
   },
 })
-
--- CHANGED: removed the VimEnter auto-open.
--- The old code opened nvim-tree whenever you opened nvim with no args or a directory.
--- Opening a directory still works (cd + open), but the tree won't pop open on a bare `nvim`.
--- Use <leader>e to toggle it when you need it, or re-add the autocmd below if you prefer auto-open.
---
--- To re-enable auto-open on directory:
--- vim.api.nvim_create_autocmd("VimEnter", {
---   callback = function(data)
---     if vim.fn.isdirectory(data.file) == 1 then
---       vim.cmd.cd(data.file)
---       require("nvim-tree.api").tree.open()
---     end
---   end,
--- })
