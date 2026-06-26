@@ -221,7 +221,8 @@ require("lazy").setup({
         { desc = "Copilot: Next suggestion" })
       vim.keymap.set("i", "<M-[>", "<Plug>(copilot-prev)",
         { desc = "Copilot: Prev suggestion" })
-      -- Trigger manually:  Alt+      vim.keymap.set("i", "<M-\>", "<Plug>(copilot-suggest)",
+      -- Trigger manually:  Alt+Backslash
+      vim.keymap.set("i", "<M-\\>", "<Plug>(copilot-suggest)",
         { desc = "Copilot: Trigger suggestion" })
     end,
   },
