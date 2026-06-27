@@ -1,7 +1,8 @@
 -- plugins/lsp/rust.lua
--- Loaded via rustaceanvim's `init` function BEFORE the plugin loads.
--- Returns a plain table → vim.g.rustaceanvim.
--- Do NOT require("rustaceanvim.*") here — plugin not loaded yet.
+-- Returned as vim.g.rustaceanvim (set in plugins-setup.lua init function).
+-- Standard LSP keymaps (gd, K, [d, etc.) are now handled by the global
+-- LspAttach autocmd in lspconfig.lua — no need to repeat them here.
+-- This file only adds Rust-specific rustaceanvim commands.
 
 local on_attach = function(_, bufnr)
   local opts = { noremap = true, silent = true, buffer = bufnr }
@@ -9,21 +10,7 @@ local on_attach = function(_, bufnr)
     vim.keymap.set("n", lhs, rhs, vim.tbl_extend("force", opts, { desc = desc }))
   end
 
-  -- Standard LSP
-  map("gf",  "<cmd>Lspsaga finder<CR>",                   "LSP: Find references")
-  map("gd",  "<cmd>Lspsaga peek_definition<CR>",          "LSP: Peek definition")
-  map("gD",  "<cmd>lua vim.lsp.buf.definition()<CR>",     "LSP: Go to definition")
-  map("gi",  "<cmd>lua vim.lsp.buf.implementation()<CR>", "LSP: Go to implementation")
-  map("gr",  "<cmd>lua vim.lsp.buf.references()<CR>",     "LSP: References")
-  map("<leader>ca", "<cmd>Lspsaga code_action<CR>",       "LSP: Code actions")
-  -- <leader>rn: global inc-rename binding in plugins/inc-rename.lua (expr=true)
-  map("<leader>D",  "<cmd>Lspsaga show_line_diagnostics<CR>",   "LSP: Line diagnostics")
-  map("<leader>d",  "<cmd>Lspsaga show_cursor_diagnostics<CR>", "LSP: Cursor diagnostics")
-  map("[d",  "<cmd>Lspsaga diagnostic_jump_prev<CR>",     "LSP: Prev diagnostic")
-  map("]d",  "<cmd>Lspsaga diagnostic_jump_next<CR>",     "LSP: Next diagnostic")
-  map("K",   "<cmd>Lspsaga hover_doc<CR>",                "LSP: Hover docs")
-
-  -- Rust-specific
+  -- Rust-specific (rustaceanvim only — not available from plain LSP)
   map("<leader>rr", "<cmd>RustLsp runnables<CR>",    "Rust: Runnables")
   map("<leader>rt", "<cmd>RustLsp testables<CR>",    "Rust: Testables")
   map("<leader>rd", "<cmd>RustLsp debuggables<CR>",  "Rust: Debuggables")
@@ -33,6 +20,8 @@ local on_attach = function(_, bufnr)
   map("<leader>rk", "<cmd>RustLsp moveItem up<CR>",  "Rust: Move item up")
   map("<leader>rj", "<cmd>RustLsp moveItem down<CR>","Rust: Move item down")
   map("<leader>rh", "<cmd>RustLsp hover actions<CR>","Rust: Hover actions")
+  -- <leader>rn: handled globally by inc-rename.lua (expr=true)
+  -- gd, K, [d, ]d, etc.: handled by LspAttach autocmd in lspconfig.lua
 end
 
 return {
@@ -44,8 +33,6 @@ return {
     on_attach = on_attach,
     default_settings = {
       ["rust-analyzer"] = {
-        -- rust-analyzer 1.78+ changed checkOnSave from a map to a boolean.
-        -- The command and extra args now live under the `check` key.
         checkOnSave = true,
         check = {
           command   = "clippy",

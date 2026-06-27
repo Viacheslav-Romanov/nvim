@@ -113,7 +113,9 @@ require("lazy").setup({
   -- LSP
   {
     "neovim/nvim-lspconfig",
-    event = { "BufReadPre", "BufNewFile" },
+    -- lazy = false: vim.lsp.config()/vim.lsp.enable() must run at startup so
+    -- configs are visible in :checkhealth and ready before any file opens.
+    lazy = false,
     dependencies = {
       "hrsh7th/cmp-nvim-lsp",
       {
