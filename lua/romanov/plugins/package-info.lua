@@ -6,9 +6,9 @@ local ok, pkg = pcall(require, "package-info")
 if not ok then return end
 
 pkg.setup({
-  colors = {
-    up_to_date = "#3C4048",  -- dim — no action needed
-    outdated   = "#d19a66",  -- orange — update available
+  highlights = {
+    up_to_date = { fg = "#3C4048" },  -- dim — no action needed
+    outdated   = { fg = "#d19a66" },  -- orange — update available
   },
   icons = {
     enable = true,
