@@ -1,11 +1,19 @@
 -- plugins/lsp/lspconfig.lua
--- Uses vim.lsp.config / vim.lsp.enable (nvim 0.11+).
+-- Uses the traditional require("lspconfig").xxx.setup() API so that configs
+-- are available at checkhealth time regardless of lazy-load order.
+-- vim.lsp.config()/vim.lsp.enable() (new nvim 0.12 built-in API) requires
+-- eager execution; lspconfig.setup() handles timing correctly on its own.
+--
 -- rust_analyzer: managed by rustaceanvim — do NOT add here.
--- sourcekit: macOS-only (Xcode ships it; not available on Debian).
+-- sourcekit: macOS-only, conditionally registered at the bottom.
 
-local cmp_nvim_lsp_ok, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
-if not cmp_nvim_lsp_ok then return end
+local lsp_ok, lspconfig = pcall(require, "lspconfig")
+if not lsp_ok then return end
 
+local cmp_ok, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
+if not cmp_ok then return end
+
+-- ── Shared on_attach ─────────────────────────────────────────────────────
 local on_attach = function(client, bufnr)
   local opts = { noremap = true, silent = true, buffer = bufnr }
   local function map(lhs, rhs, desc)
@@ -19,7 +27,7 @@ local on_attach = function(client, bufnr)
   map("gr",  "<cmd>lua vim.lsp.buf.references()<CR>",     "LSP: References")
   map("gt",  "<cmd>lua vim.lsp.buf.type_definition()<CR>","LSP: Type definition")
   map("<leader>ca", "<cmd>Lspsaga code_action<CR>",       "LSP: Code actions")
-  map("<leader>rn", "<cmd>Lspsaga rename<CR>",            "LSP: Rename symbol")
+  -- <leader>rn: global inc-rename binding in plugins/inc-rename.lua (expr=true)
   map("<leader>D",  "<cmd>Lspsaga show_line_diagnostics<CR>",   "LSP: Line diagnostics")
   map("<leader>d",  "<cmd>Lspsaga show_cursor_diagnostics<CR>", "LSP: Cursor diagnostics")
   map("[d",  "<cmd>Lspsaga diagnostic_jump_prev<CR>",     "LSP: Prev diagnostic")
@@ -30,6 +38,7 @@ local on_attach = function(client, bufnr)
   vim.keymap.set("i", "<C-s>", vim.lsp.buf.signature_help,
     vim.tbl_extend("force", opts, { desc = "LSP: Signature help" }))
 
+  -- TypeScript: organise imports
   if client.name == "ts_ls" then
     map("<leader>oi", function()
       vim.lsp.buf.execute_command({
@@ -39,7 +48,7 @@ local on_attach = function(client, bufnr)
     end, "TS: Organise imports")
   end
 
-  -- Xcode keymaps only on Apple-platform filetypes (safe on Debian: ft never matches)
+  -- Xcode keymaps only on Apple-platform filetypes (safe on Debian)
   local ft = vim.bo[bufnr].filetype
   if ft == "swift" or ft == "objc" or ft == "objcpp" then
     map("<leader>xl", "<cmd>XcodebuildToggleLogs<cr>",             "Xcode: Toggle logs")
@@ -54,12 +63,14 @@ local on_attach = function(client, bufnr)
   end
 end
 
+-- ── Capabilities ─────────────────────────────────────────────────────────
 local capabilities = cmp_nvim_lsp.default_capabilities()
 
+-- ── Diagnostic display ───────────────────────────────────────────────────
 local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
 for type, icon in pairs(signs) do
-  local hl = "DiagnosticSign" .. type
-  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
+  vim.fn.sign_define("DiagnosticSign" .. type,
+    { text = icon, texthl = "DiagnosticSign" .. type, numhl = "" })
 end
 
 vim.diagnostic.config({
@@ -69,18 +80,24 @@ vim.diagnostic.config({
   update_in_insert = false,
 })
 
+-- ── Server definitions ────────────────────────────────────────────────────
 local servers = {
-  ts_ls   = {},
-  eslint  = {},
-  html    = {},
-  cssls   = {},
+  -- JavaScript / TypeScript
+  ts_ls  = {},
+  eslint = {},
+
+  -- Web
+  html        = {},
+  cssls       = {},
   tailwindcss = {},
-  emmet_ls = {
+  emmet_ls    = {
     filetypes = {
       "html", "typescriptreact", "javascriptreact",
       "css", "sass", "scss", "less", "svelte", "php",
     },
   },
+
+  -- PHP
   intelephense = {
     settings = {
       intelephense = {
@@ -97,7 +114,11 @@ local servers = {
       },
     },
   },
+
+  -- Kotlin
   kotlin_language_server = {},
+
+  -- C / C++
   clangd = {
     cmd = {
       "clangd", "--background-index", "--clang-tidy",
@@ -106,6 +127,8 @@ local servers = {
     },
     filetypes = { "c", "cpp", "objc", "objcpp" },
   },
+
+  -- Lua (for editing this config)
   lua_ls = {
     settings = {
       Lua = {
@@ -124,15 +147,19 @@ local servers = {
   },
 }
 
--- sourcekit (Swift): macOS only
-if vim.loop.os_uname().sysname == "Darwin" then
-  servers["sourcekit"] = { filetypes = { "swift", "objc", "objcpp" } }
+-- ── Apply shared config and setup each server ─────────────────────────────
+for name, cfg in pairs(servers) do
+  lspconfig[name].setup(vim.tbl_deep_extend("force", {
+    on_attach    = on_attach,
+    capabilities = capabilities,
+  }, cfg))
 end
 
-for name, cfg in pairs(servers) do
-  vim.lsp.config(name, vim.tbl_deep_extend("force", {
-    capabilities = capabilities,
+-- sourcekit (Swift): macOS only — Xcode ships it, not available on Debian
+if vim.loop.os_uname().sysname == "Darwin" then
+  lspconfig.sourcekit.setup({
     on_attach    = on_attach,
-  }, cfg))
-  vim.lsp.enable(name)
+    capabilities = capabilities,
+    filetypes    = { "swift", "objc", "objcpp" },
+  })
 end

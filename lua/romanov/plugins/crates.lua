@@ -14,9 +14,6 @@ crates.setup({
     completion = true,
     hover      = true,
   },
-  completion = {
-    cmp = { enabled = true },  -- integrate with nvim-cmp
-  },
   popup = { border = "rounded" },
 })
 
