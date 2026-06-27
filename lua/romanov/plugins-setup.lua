@@ -159,8 +159,11 @@ require("lazy").setup({
   -- Treesitter
   {
     "nvim-treesitter/nvim-treesitter",
-    event  = { "BufReadPre", "BufNewFile" },
-    build  = ":TSUpdate",
+    -- lazy=false: ensures ensure_installed runs at startup and parsers are
+    -- compiled before any file opens. Previously lazy (event=BufReadPre) meant
+    -- parsers were never installed until manually running :TSUpdate.
+    lazy  = false,
+    build = ":TSUpdate",
     dependencies = {
       "windwp/nvim-ts-autotag",
       "nvim-treesitter/nvim-treesitter-textobjects",
