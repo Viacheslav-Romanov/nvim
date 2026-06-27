@@ -62,3 +62,14 @@ opt.completeopt = "menu,menuone,preview" -- already in nvim-cmp but good to be e
 -- Folds (treesitter-powered when treesitter loads)
 opt.foldmethod = "indent" -- sensible default; treesitter.lua overrides to "expr"
 opt.foldlevelstart = 99 -- NEW: start with all folds open
+
+-- Transparency for floating windows and popup menus.
+-- The terminal background image / colour shows through at this opacity level.
+-- 0 = fully opaque, 100 = invisible.  10-15 is subtle but visible.
+opt.winblend = 10   -- floating windows (LSP hover, diagnostics, etc.)
+opt.pumblend = 10   -- popup completion menu
+
+-- Disable providers we don't use — removes noise from :checkhealth
+-- Ruby, Perl: not needed for this config
+vim.g.loaded_ruby_provider = 0
+vim.g.loaded_perl_provider = 0
