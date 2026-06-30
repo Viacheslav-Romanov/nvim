@@ -434,6 +434,49 @@ nvim drivers/mydriver.c
 
 ---
 
+## Mermaid Diagrams
+
+Two complementary ways to view mermaid diagrams in markdown files — use whichever fits the session.
+
+### Inline (terminal graphics — diagram.nvim)
+
+Renders directly in the buffer as an image, no browser needed. Works in Kitty-protocol-capable
+terminals (iTerm2, Kitty, WezTerm). Auto-renders on `InsertLeave` / `BufWinEnter` / `TextChanged`
+while your cursor is inside a fenced ` ```mermaid ` block in a markdown file.
+
+| Key | Action |
+|-----|--------|
+| `<leader>dgr` | Render diagram under cursor |
+| `<leader>dgc` | Clear rendered images |
+| `<leader>dgt` | Force re-render |
+
+**Works over SSH?** In principle yes — it's terminal escape codes, not a GUI. If you're inside
+tmux on the remote server, add `set -ga terminal-overrides ',*:Tc'` and
+`set -g allow-passthrough on` to `.tmux.conf` first, or images render blank. iTerm2 supports the
+Kitty graphics protocol natively, no local config needed.
+
+### Browser preview (always works — markdown-preview.nvim)
+
+Opens a real browser tab with full mermaid.js rendering. Use this when diagram.nvim doesn't
+render (e.g. terminal doesn't support image protocols, or you're behind a tmux session without
+passthrough configured).
+
+| Key | Action |
+|-----|--------|
+| `<leader>mvo` | Open preview in browser |
+| `<leader>mvr` | Force refresh |
+| `<leader>mvc` | Close preview |
+
+**On a remote Debian server:** the preview server binds to `localhost:8421` on the *remote*
+machine. Forward the port to view it locally:
+```bash
+ssh -L 8421:localhost:8421 web
+```
+Then open `http://localhost:8421` in your local browser. Add `LocalForward 8421 localhost:8421`
+under the relevant `Host` block in `~/.ssh/config` to make this automatic on every connection.
+
+---
+
 ## Quick Reference Card
 
 ```
@@ -448,4 +491,6 @@ Debug         <leader>dc start · <leader>db break · <leader>ds over · <leader
 Format        <leader>mp now · <leader>tf toggle · <leader>ml lint
 Docs          <leader>ng generate · <leader>nf func · <leader>nc class
 Trouble       <leader>Td workspace · <leader>Tb buffer · ]t / [t jump
+Mermaid       <leader>dgr inline render · <leader>mvo browser preview
 ```
+

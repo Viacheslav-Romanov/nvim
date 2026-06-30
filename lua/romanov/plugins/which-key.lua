@@ -43,6 +43,8 @@ wk.add({
   { "<leader>N",  group = "NPM (package.json)" },
   { "<leader>T",  group = "Trouble / Diagnostics" },
   { "<leader>n",  group = "Doc / Neogen" },
+  { "<leader>dg", group = "Diagram (inline mermaid)" },
+  { "<leader>mv", group = "Markdown Preview (browser)" },
   { "<leader>a",  desc  = "Harpoon: Add file" },
   { "<leader>l",  desc  = "Harpoon: Quick menu" },
   { "<leader>u",  desc  = "Undotree: Toggle" },

@@ -337,6 +337,35 @@ require("lazy").setup({
     end,
   },
 
+  -- Mermaid diagrams: inline terminal-graphics rendering (diagram.nvim)
+  -- Works locally and, in principle, over SSH too — see plugins/diagram.lua
+  -- for the full explanation of when it does/doesn't work remotely.
+  {
+    "3rd/image.nvim",
+    -- backend = "kitty" needs no external binary at all (pure protocol),
+    -- which is the most SSH/tmux-friendly option of the available backends.
+    opts = {
+      backend = "kitty",
+      max_width_window_percentage  = 80,
+      max_height_window_percentage = 60,
+      window_overlap_clear_enabled = true,
+    },
+  },
+  {
+    "3rd/diagram.nvim",
+    ft           = { "markdown" },
+    dependencies = { "3rd/image.nvim" },
+    config       = function() require("romanov.plugins.diagram") end,
+  },
+
+  -- Mermaid diagrams: reliable browser-based fallback (always works,
+  -- locally or over SSH with port forwarding — see plugins/markdown-preview.lua)
+  {
+    "selimacerbas/markdown-preview.nvim",
+    ft           = { "markdown" },
+    dependencies = { "selimacerbas/live-server.nvim" },
+    config       = function() require("romanov.plugins.markdown-preview") end,
+  },
 
 }, {
   ui = { border = "rounded" },
