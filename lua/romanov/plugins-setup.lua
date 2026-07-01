@@ -344,6 +344,10 @@ require("lazy").setup({
     "3rd/image.nvim",
     -- backend = "kitty" needs no external binary at all (pure protocol),
     -- which is the most SSH/tmux-friendly option of the available backends.
+    -- The plugin ships a rockspec that lazy.nvim auto-builds via luarocks/
+    -- hererocks by default; that's disabled globally below (rocks.enabled)
+    -- because hererocks fails to compile Lua 5.1 on Debian servers without
+    -- full build toolchains and then retries on every single startup.
     opts = {
       backend = "kitty",
       max_width_window_percentage  = 80,
@@ -371,5 +375,17 @@ require("lazy").setup({
   ui = { border = "rounded" },
   performance = {
     rtp = { disabled_plugins = { "gzip", "tarPlugin", "tohtml", "tutor", "zipPlugin" } },
+  },
+  -- Disable rockspec/luarocks auto-build globally. image.nvim is the only
+  -- plugin in this config that ships a *.rockspec (for an optional magick
+  -- image processor); we use the kitty backend instead, which needs no
+  -- external image library at all. Without this, lazy.nvim tries to build
+  -- via hererocks (compiling Lua 5.1 from source) on every plugin sync,
+  -- which reliably fails on Debian servers lacking full build toolchains
+  -- and then retries on every nvim startup ("Too many rounds of missing
+  -- plugins"). Setting rocks.enabled = false skips rockspec builds entirely
+  -- and is safe since nothing else in this config needs a luarocks package.
+  rocks = {
+    enabled = false,
   },
 })
