@@ -3,6 +3,18 @@
 -- inline as images using image.nvim + a terminal graphics protocol
 -- (Kitty graphics protocol or Überzug++).
 --
+-- REQUIRED EXTERNAL DEPENDENCY:
+-- diagram.nvim does NOT render mermaid syntax directly. It shells out to
+-- `mmdc` (mermaid-cli) to rasterize the diagram to PNG/SVG first, then
+-- displays that image via the terminal graphics protocol. mmdc itself uses
+-- Puppeteer + a headless Chrome build to do the rasterizing.
+--   macOS:  brew install mermaid-cli
+--           npx puppeteer browsers install chrome-headless-shell
+--   Debian: npm install -g @mermaid-js/mermaid-cli
+--           npx puppeteer browsers install chrome-headless-shell
+-- Without both of these, :render fails with a Puppeteer "could not find
+-- chrome-headless-shell" error (silently logged, no crash).
+--
 -- IMPORTANT — works over SSH too, in principle:
 -- The Kitty graphics protocol is just terminal escape sequences. If your
 -- local terminal (iTerm2, Kitty, WezTerm) understands them, it doesn't
@@ -11,9 +23,8 @@
 -- terminal renders the image. No GUI is required on the remote host.
 --
 -- What CAN break it on a remote/Debian session:
---   1. The remote machine needs `image.nvim`'s chosen processor available
---      (ImageMagick `magick`/`convert`, or stick with the kitty backend
---      which needs no external binary at all — just the protocol).
+--   1. mermaid-cli + chrome-headless-shell must be installed on THAT
+--      machine (mmdc runs server-side, where nvim runs) — see above.
 --   2. tmux: by default tmux strips graphics escape codes. If you use tmux
 --      on the server, you need tmux >= 3.3 with `allow-passthrough on` set
 --      in .tmux.conf, or images will silently not render (no crash though).
@@ -21,8 +32,9 @@
 --      no extra config needed locally.
 --
 -- If diagrams don't render in a given session, the plugin fails silently
--- (no error) — you'll just see the raw code fence. That's expected on
--- non-graphics-capable terminals.
+-- in the UI (check :messages for the Puppeteer/mmdc error) — you'll just
+-- see the raw code fence. That's expected on non-graphics-capable terminals
+-- or machines missing mermaid-cli.
 
 local ok_diag, diagram = pcall(require, "diagram")
 if not ok_diag then return end

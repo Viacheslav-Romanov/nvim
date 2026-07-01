@@ -444,16 +444,30 @@ Renders directly in the buffer as an image, no browser needed. Works in Kitty-pr
 terminals (iTerm2, Kitty, WezTerm). Auto-renders on `InsertLeave` / `BufWinEnter` / `TextChanged`
 while your cursor is inside a fenced ` ```mermaid ` block in a markdown file.
 
+**Requires `mermaid-cli` + a headless Chrome build** (diagram.nvim shells out to `mmdc` to
+rasterize the diagram first, then displays the resulting image — it does not render mermaid
+syntax directly):
+```bash
+# macOS
+brew install mermaid-cli
+npx puppeteer browsers install chrome-headless-shell
+
+# Debian
+npm install -g @mermaid-js/mermaid-cli
+npx puppeteer browsers install chrome-headless-shell
+```
+
 | Key | Action |
 |-----|--------|
 | `<leader>dgr` | Render diagram under cursor |
 | `<leader>dgc` | Clear rendered images |
 | `<leader>dgt` | Force re-render |
 
-**Works over SSH?** In principle yes — it's terminal escape codes, not a GUI. If you're inside
-tmux on the remote server, add `set -ga terminal-overrides ',*:Tc'` and
-`set -g allow-passthrough on` to `.tmux.conf` first, or images render blank. iTerm2 supports the
-Kitty graphics protocol natively, no local config needed.
+**Works over SSH?** In principle yes — it's terminal escape codes, not a GUI. `mmdc` runs
+server-side (wherever nvim is running), so the mermaid-cli + chrome-headless-shell install above
+must happen on that same machine. If you're inside tmux on the remote server, also add
+`set -ga terminal-overrides ',*:Tc'` and `set -g allow-passthrough on` to `.tmux.conf`, or images
+render blank. iTerm2 supports the Kitty graphics protocol natively, no local config needed.
 
 ### Browser preview (always works — markdown-preview.nvim)
 
