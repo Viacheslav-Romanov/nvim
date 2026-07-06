@@ -6,386 +6,453 @@
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
-  vim.fn.system({
-    "git", "clone", "--filter=blob:none",
-    "https://github.com/folke/lazy.nvim.git",
-    "--branch=stable", lazypath,
-  })
+	vim.fn.system({
+		"git",
+		"clone",
+		"--filter=blob:none",
+		"https://github.com/folke/lazy.nvim.git",
+		"--branch=stable",
+		lazypath,
+	})
 end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
 
-  { "nvim-lua/plenary.nvim",         lazy = true },
-  { "nvim-tree/nvim-web-devicons",   lazy = true },
-  { "bluz71/vim-nightfly-guicolors", priority = 1000, lazy = false },
+	{ "nvim-lua/plenary.nvim", lazy = true },
+	{ "nvim-tree/nvim-web-devicons", lazy = true },
+	{ "bluz71/vim-nightfly-guicolors", priority = 1000, lazy = false },
 
-  -- Which-key
-  {
-    "folke/which-key.nvim",
-    event = "VeryLazy",
-    config = function() require("romanov.plugins.which-key") end,
-  },
+	-- Which-key
+	{
+		"folke/which-key.nvim",
+		event = "VeryLazy",
+		config = function()
+			require("romanov.plugins.which-key")
+		end,
+	},
 
-  "christoomey/vim-tmux-navigator",
-  "szw/vim-maximizer",
-  "tpope/vim-surround",
-  "inkarkat/vim-ReplaceWithRegister",
+	"christoomey/vim-tmux-navigator",
+	"szw/vim-maximizer",
+	"tpope/vim-surround",
+	"inkarkat/vim-ReplaceWithRegister",
 
-  -- Commenting (with JSX/PHP-aware comment strings)
-  {
-    "numToStr/Comment.nvim",
-    event = { "BufReadPre", "BufNewFile" },
-    dependencies = { "JoosepAlviste/nvim-ts-context-commentstring" },
-    config = function() require("romanov.plugins.comment") end,
-  },
+	-- Commenting (with JSX/PHP-aware comment strings)
+	{
+		"numToStr/Comment.nvim",
+		event = { "BufReadPre", "BufNewFile" },
+		dependencies = { "JoosepAlviste/nvim-ts-context-commentstring" },
+		config = function()
+			require("romanov.plugins.comment")
+		end,
+	},
 
-  -- File explorer
-  {
-    "nvim-tree/nvim-tree.lua",
-    dependencies = { "nvim-tree/nvim-web-devicons" },
-    config = function() require("romanov.plugins.nvim-tree") end,
-  },
+	-- File explorer
+	{
+		"nvim-tree/nvim-tree.lua",
+		lazy = false,
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+		config = function()
+			require("romanov.plugins.nvim-tree")
+		end,
+	},
 
-  -- Yazi floating file manager
-  -- macOS: brew install yazi
-  -- Debian: download pre-built binary from github.com/sxyazi/yazi/releases
-  {
-    "mikavilpas/yazi.nvim",
-    event = "VeryLazy",
-    dependencies = { "nvim-lua/plenary.nvim" },
-    config = function() require("romanov.plugins.yazi") end,
-  },
+	-- Yazi floating file manager
+	-- macOS: brew install yazi
+	-- Debian: download pre-built binary from github.com/sxyazi/yazi/releases
+	{
+		"mikavilpas/yazi.nvim",
+		event = "VeryLazy",
+		dependencies = { "nvim-lua/plenary.nvim" },
+		config = function()
+			require("romanov.plugins.yazi")
+		end,
+	},
 
-  {
-    "nvim-lualine/lualine.nvim",
-    event = "VeryLazy",
-    config = function() require("romanov.plugins.lualine") end,
-  },
+	{
+		"nvim-lualine/lualine.nvim",
+		event = "VeryLazy",
+		config = function()
+			require("romanov.plugins.lualine")
+		end,
+	},
 
-  -- Indent guides
-  {
-    "lukas-reineke/indent-blankline.nvim",
-    main  = "ibl",
-    event = { "BufReadPre", "BufNewFile" },
-    config = function() require("romanov.plugins.indent-blankline") end,
-  },
+	-- Indent guides
+	{
+		"lukas-reineke/indent-blankline.nvim",
+		main = "ibl",
+		event = { "BufReadPre", "BufNewFile" },
+		config = function()
+			require("romanov.plugins.indent-blankline")
+		end,
+	},
 
-  -- Telescope
-  {
-    "nvim-telescope/telescope.nvim",
-    branch = "master",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      {
-        "nvim-telescope/telescope-fzf-native.nvim",
-        build = "make",
-        cond  = function() return vim.fn.executable("make") == 1 end,
-      },
-      "nvim-telescope/telescope-ui-select.nvim",
-    },
-    cmd = "Telescope",
-    config = function() require("romanov.plugins.telescope") end,
-  },
+	-- Telescope
+	{
+		"nvim-telescope/telescope.nvim",
+		branch = "master",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			{
+				"nvim-telescope/telescope-fzf-native.nvim",
+				build = "make",
+				cond = function()
+					return vim.fn.executable("make") == 1
+				end,
+			},
+			"nvim-telescope/telescope-ui-select.nvim",
+		},
+		cmd = "Telescope",
+		config = function()
+			require("romanov.plugins.telescope")
+		end,
+	},
 
-  -- Autocompletion
-  {
-    "hrsh7th/nvim-cmp",
-    event = "InsertEnter",
-    dependencies = {
-      "hrsh7th/cmp-buffer", "hrsh7th/cmp-path", "hrsh7th/cmp-nvim-lsp",
-      "saadparwaiz1/cmp_luasnip", "L3MON4D3/LuaSnip",
-      "rafamadriz/friendly-snippets", "onsails/lspkind.nvim",
-    },
-    config = function() require("romanov.plugins.nvim-cmp") end,
-  },
+	-- Autocompletion
+	{
+		"hrsh7th/nvim-cmp",
+		event = "InsertEnter",
+		dependencies = {
+			"hrsh7th/cmp-buffer",
+			"hrsh7th/cmp-path",
+			"hrsh7th/cmp-nvim-lsp",
+			"saadparwaiz1/cmp_luasnip",
+			"L3MON4D3/LuaSnip",
+			"rafamadriz/friendly-snippets",
+			"onsails/lspkind.nvim",
+		},
+		config = function()
+			require("romanov.plugins.nvim-cmp")
+		end,
+	},
 
-  -- Mason: LSP + DAP installer
-  {
-    "williamboman/mason.nvim",
-    dependencies = {
-      "williamboman/mason-lspconfig.nvim",
-      "jay-babu/mason-nvim-dap.nvim",
-    },
-    config = function() require("romanov.plugins.lsp.mason") end,
-  },
+	-- Mason: LSP + DAP installer
+	{
+		"williamboman/mason.nvim",
+		dependencies = {
+			"williamboman/mason-lspconfig.nvim",
+			"jay-babu/mason-nvim-dap.nvim",
+		},
+		config = function()
+			require("romanov.plugins.lsp.mason")
+		end,
+	},
 
-  -- LSP
-  {
-    "neovim/nvim-lspconfig",
-    -- lazy = false: vim.lsp.config()/vim.lsp.enable() must run at startup so
-    -- configs are visible in :checkhealth and ready before any file opens.
-    lazy = false,
-    dependencies = {
-      "hrsh7th/cmp-nvim-lsp",
-      {
-        "glepnir/lspsaga.nvim",
-        branch = "main",
-        dependencies = { "nvim-tree/nvim-web-devicons", "nvim-treesitter/nvim-treesitter" },
-      },
-    },
-    config = function()
-      require("romanov.plugins.lsp.lspsaga")
-      require("romanov.plugins.lsp.lspconfig")
-    end,
-  },
+	-- LSP
+	{
+		"neovim/nvim-lspconfig",
+		-- lazy = false: vim.lsp.config()/vim.lsp.enable() must run at startup so
+		-- configs are visible in :checkhealth and ready before any file opens.
+		lazy = false,
+		dependencies = {
+			"hrsh7th/cmp-nvim-lsp",
+			{
+				"glepnir/lspsaga.nvim",
+				branch = "main",
+				dependencies = { "nvim-tree/nvim-web-devicons", "nvim-treesitter/nvim-treesitter" },
+			},
+		},
+		config = function()
+			require("romanov.plugins.lsp.lspsaga")
+			require("romanov.plugins.lsp.lspconfig")
+		end,
+	},
 
-  -- Rust: rustaceanvim (manages rust-analyzer itself)
-  -- init = sets vim.g.rustaceanvim BEFORE the plugin loads (required)
-  {
-    "mrcjkb/rustaceanvim",
-    -- No version pin: always latest so nvim 0.12 API deprecations get patched
-    version = false,
-    ft      = { "rust" },
-    init    = function()
-      vim.g.rustaceanvim = require("romanov.plugins.lsp.rust")
-    end,
-  },
+	-- Rust: rustaceanvim (manages rust-analyzer itself)
+	-- init = sets vim.g.rustaceanvim BEFORE the plugin loads (required)
+	{
+		"mrcjkb/rustaceanvim",
+		-- No version pin: always latest so nvim 0.12 API deprecations get patched
+		version = false,
+		ft = { "rust" },
+		init = function()
+			vim.g.rustaceanvim = require("romanov.plugins.lsp.rust")
+		end,
+	},
 
-  -- Format on save (replaces none-ls)
-  {
-    "stevearc/conform.nvim",
-    event = { "BufReadPre", "BufNewFile" },
-    config = function() require("romanov.plugins.conform") end,
-  },
+	-- Format on save (replaces none-ls)
+	{
+		"stevearc/conform.nvim",
+		event = { "BufReadPre", "BufNewFile" },
+		config = function()
+			require("romanov.plugins.conform")
+		end,
+	},
 
-  -- Async linting
-  {
-    "mfussenegger/nvim-lint",
-    event = { "BufReadPre", "BufNewFile" },
-    config = function() require("romanov.plugins.lint") end,
-  },
+	-- Async linting
+	{
+		"mfussenegger/nvim-lint",
+		event = { "BufReadPre", "BufNewFile" },
+		config = function()
+			require("romanov.plugins.lint")
+		end,
+	},
 
-  -- Treesitter
-  {
-    "nvim-treesitter/nvim-treesitter",
-    -- lazy=false: ensures ensure_installed runs at startup and parsers are
-    -- compiled before any file opens. Previously lazy (event=BufReadPre) meant
-    -- parsers were never installed until manually running :TSUpdate.
-    lazy  = false,
-    build = ":TSUpdate",
-    dependencies = {
-      "windwp/nvim-ts-autotag",
-      "nvim-treesitter/nvim-treesitter-textobjects",
-    },
-    config = function() require("romanov.plugins.treesitter") end,
-  },
+	-- Treesitter
+	{
+		"nvim-treesitter/nvim-treesitter",
+		-- lazy=false: ensures ensure_installed runs at startup and parsers are
+		-- compiled before any file opens. Previously lazy (event=BufReadPre) meant
+		-- parsers were never installed until manually running :TSUpdate.
+		lazy = false,
+		build = ":TSUpdate",
+		dependencies = {
+			"windwp/nvim-ts-autotag",
+			"nvim-treesitter/nvim-treesitter-textobjects",
+		},
+		config = function()
+			require("romanov.plugins.treesitter")
+		end,
+	},
 
-  {
-    "windwp/nvim-autopairs",
-    event  = "InsertEnter",
-    config = function() require("romanov.plugins.autopairs") end,
-  },
+	{
+		"windwp/nvim-autopairs",
+		event = "InsertEnter",
+		config = function()
+			require("romanov.plugins.autopairs")
+		end,
+	},
 
-  -- Git
-  {
-    "lewis6991/gitsigns.nvim",
-    event  = { "BufReadPre", "BufNewFile" },
-    config = function() require("romanov.plugins.gitsigns") end,
-  },
-  {
-    "kdheepak/lazygit.nvim",
-    cmd          = "LazyGit",
-    dependencies = { "nvim-lua/plenary.nvim" },
-    config       = function() require("romanov.plugins.lazygit") end,
-  },
+	-- Git
+	{
+		"lewis6991/gitsigns.nvim",
+		event = { "BufReadPre", "BufNewFile" },
+		config = function()
+			require("romanov.plugins.gitsigns")
+		end,
+	},
+	{
+		"kdheepak/lazygit.nvim",
+		cmd = "LazyGit",
+		dependencies = { "nvim-lua/plenary.nvim" },
+		config = function()
+			require("romanov.plugins.lazygit")
+		end,
+	},
 
-  -- Debugging (DAP)
-  {
-    "mfussenegger/nvim-dap",
-    event = "VeryLazy",
-    dependencies = {
-      "rcarriga/nvim-dap-ui",
-      "nvim-neotest/nvim-nio",
-      "theHamsta/nvim-dap-virtual-text",
-    },
-    config = function() require("romanov.plugins.dap.dap") end,
-  },
+	-- Debugging (DAP)
+	{
+		"mfussenegger/nvim-dap",
+		event = "VeryLazy",
+		dependencies = {
+			"rcarriga/nvim-dap-ui",
+			"nvim-neotest/nvim-nio",
+			"theHamsta/nvim-dap-virtual-text",
+		},
+		config = function()
+			require("romanov.plugins.dap.dap")
+		end,
+	},
 
-  -- Xcodebuild (Swift/macOS only)
-  {
-    "wojciech-kulik/xcodebuild.nvim",
-    dependencies = { "nvim-telescope/telescope.nvim", "MunifTanjim/nui.nvim" },
-    ft     = { "swift", "objc", "objcpp" },
-    config = function() require("romanov.plugins.xcodebuild") end,
-  },
+	-- Xcodebuild (Swift/macOS only)
+	{
+		"wojciech-kulik/xcodebuild.nvim",
+		dependencies = { "nvim-telescope/telescope.nvim", "MunifTanjim/nui.nvim" },
+		ft = { "swift", "objc", "objcpp" },
+		config = function()
+			require("romanov.plugins.xcodebuild")
+		end,
+	},
 
-  {
-    "github/copilot.vim",
-    event = "InsertEnter",
-    config = function()
-      -- Disable Copilot's Tab mapping so nvim-cmp owns <Tab> exclusively.
-      vim.g.copilot_no_tab_map = true
-      -- Accept full suggestion:  Alt+L
-      vim.keymap.set("i", "<M-l>", function()
-        return vim.fn["copilot#Accept"]("")
-      end, { silent = true, expr = true, replace_keycodes = false,
-             desc = "Copilot: Accept suggestion" })
-      -- Cycle suggestions:  Alt+] / Alt+[
-      vim.keymap.set("i", "<M-]>", "<Plug>(copilot-next)",
-        { desc = "Copilot: Next suggestion" })
-      vim.keymap.set("i", "<M-[>", "<Plug>(copilot-prev)",
-        { desc = "Copilot: Prev suggestion" })
-      -- Trigger manually:  Alt+Backslash
-      vim.keymap.set("i", "<M-\\>", "<Plug>(copilot-suggest)",
-        { desc = "Copilot: Trigger suggestion" })
-    end,
-  },
+	{
+		"github/copilot.vim",
+		event = "InsertEnter",
+		config = function()
+			-- Disable Copilot's Tab mapping so nvim-cmp owns <Tab> exclusively.
+			vim.g.copilot_no_tab_map = true
+			-- Accept full suggestion:  Alt+L
+			vim.keymap.set("i", "<M-l>", function()
+				return vim.fn["copilot#Accept"]("")
+			end, {
+				silent = true,
+				expr = true,
+				replace_keycodes = false,
+				desc = "Copilot: Accept suggestion",
+			})
+			-- Cycle suggestions:  Alt+] / Alt+[
+			vim.keymap.set("i", "<M-]>", "<Plug>(copilot-next)", { desc = "Copilot: Next suggestion" })
+			vim.keymap.set("i", "<M-[>", "<Plug>(copilot-prev)", { desc = "Copilot: Prev suggestion" })
+			-- Trigger manually:  Alt+Backslash
+			vim.keymap.set("i", "<M-\\>", "<Plug>(copilot-suggest)", { desc = "Copilot: Trigger suggestion" })
+		end,
+	},
 
-  {
-    "MeanderingProgrammer/render-markdown.nvim",
-    ft           = { "markdown" },
-    dependencies = { "nvim-tree/nvim-web-devicons" },
-    config       = function()
-      require("render-markdown").setup({ render_modes = { "n", "v", "i", "c" } })
-    end,
-  },
+	{
+		"MeanderingProgrammer/render-markdown.nvim",
+		ft = { "markdown" },
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+		config = function()
+			require("render-markdown").setup({ render_modes = { "n", "v", "i", "c" } })
+		end,
+	},
 
-  {
-    "folke/todo-comments.nvim",
-    event        = { "BufReadPre", "BufNewFile" },
-    dependencies = { "nvim-lua/plenary.nvim" },
-    config       = function() require("todo-comments").setup() end,
-  },
+	{
+		"folke/todo-comments.nvim",
+		event = { "BufReadPre", "BufNewFile" },
+		dependencies = { "nvim-lua/plenary.nvim" },
+		config = function()
+			require("todo-comments").setup()
+		end,
+	},
 
-  -- ── Startup dashboard ────────────────────────────────────────────────────
-  {
-    "goolord/alpha-nvim",
-    -- lazy = false: alpha must load at startup; using event="VimEnter" causes a
-    -- timing race where alpha's own VimEnter autocmd fires before lazy loads it.
-    lazy = false,
-    priority = 900,
-    dependencies = { "nvim-tree/nvim-web-devicons" },
-    config = function() require("romanov.plugins.alpha") end,
-  },
+	-- ── Startup dashboard ────────────────────────────────────────────────────
+	{
+		"goolord/alpha-nvim",
+		-- lazy = false: alpha must load at startup; using event="VimEnter" causes a
+		-- timing race where alpha's own VimEnter autocmd fires before lazy loads it.
+		lazy = false,
+		priority = 900,
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+		config = function()
+			require("romanov.plugins.alpha")
+		end,
+	},
 
+	-- ── Productivity boosters ─────────────────────────────────────────────────
 
-  -- ── Productivity boosters ─────────────────────────────────────────────────
+	-- Rust: inline crate version info + actions in Cargo.toml
+	{
+		"saecki/crates.nvim",
+		event = { "BufRead Cargo.toml" },
+		dependencies = { "nvim-lua/plenary.nvim" },
+		config = function()
+			require("romanov.plugins.crates")
+		end,
+	},
 
-  -- Rust: inline crate version info + actions in Cargo.toml
-  {
-    "saecki/crates.nvim",
-    event = { "BufRead Cargo.toml" },
-    dependencies = { "nvim-lua/plenary.nvim" },
-    config = function() require("romanov.plugins.crates") end,
-  },
+	-- JavaScript: inline npm version info in package.json
+	{
+		"vuki656/package-info.nvim",
+		event = { "BufRead package.json" },
+		dependencies = { "MunifTanjim/nui.nvim" },
+		config = function()
+			require("romanov.plugins.package-info")
+		end,
+	},
 
-  -- JavaScript: inline npm version info in package.json
-  {
-    "vuki656/package-info.nvim",
-    event = { "BufRead package.json" },
-    dependencies = { "MunifTanjim/nui.nvim" },
-    config = function() require("romanov.plugins.package-info") end,
-  },
+	-- Harpoon v2: bookmark 4 hot files per project, jump with Alt+1..4
+	{
+		"ThePrimeagen/harpoon",
+		branch = "harpoon2",
+		dependencies = { "nvim-lua/plenary.nvim" },
+		config = function()
+			require("romanov.plugins.harpoon")
+		end,
+	},
 
-  -- Harpoon v2: bookmark 4 hot files per project, jump with Alt+1..4
-  {
-    "ThePrimeagen/harpoon",
-    branch       = "harpoon2",
-    dependencies = { "nvim-lua/plenary.nvim" },
-    config       = function() require("romanov.plugins.harpoon") end,
-  },
+	-- Trouble v3: project-wide diagnostics panel
+	{
+		"folke/trouble.nvim",
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+		cmd = "Trouble",
+		config = function()
+			require("romanov.plugins.trouble")
+		end,
+	},
 
-  -- Trouble v3: project-wide diagnostics panel
-  {
-    "folke/trouble.nvim",
-    dependencies = { "nvim-tree/nvim-web-devicons" },
-    cmd          = "Trouble",
-    config       = function() require("romanov.plugins.trouble") end,
-  },
+	-- Diffview: two-panel git diff + full file history
+	{
+		"sindrets/diffview.nvim",
+		dependencies = { "nvim-lua/plenary.nvim" },
+		cmd = { "DiffviewOpen", "DiffviewFileHistory", "DiffviewClose" },
+		config = function()
+			require("romanov.plugins.diffview")
+		end,
+	},
 
-  -- Diffview: two-panel git diff + full file history
-  {
-    "sindrets/diffview.nvim",
-    dependencies = { "nvim-lua/plenary.nvim" },
-    cmd          = { "DiffviewOpen", "DiffviewFileHistory", "DiffviewClose" },
-    config       = function() require("romanov.plugins.diffview") end,
-  },
+	-- inc-rename: rename with live preview (replaces lspsaga rename)
+	{
+		"smjonas/inc-rename.nvim",
+		event = { "BufReadPre", "BufNewFile" },
+		config = function()
+			require("romanov.plugins.inc-rename")
+		end,
+	},
 
-  -- inc-rename: rename with live preview (replaces lspsaga rename)
-  {
-    "smjonas/inc-rename.nvim",
-    event  = { "BufReadPre", "BufNewFile" },
-    config = function() require("romanov.plugins.inc-rename") end,
-  },
+	-- Neogen: generate doc comment skeletons (Rustdoc / JSDoc / Doxygen / KDoc)
+	{
+		"danymat/neogen",
+		dependencies = { "nvim-treesitter/nvim-treesitter" },
+		cmd = "Neogen",
+		config = function()
+			require("romanov.plugins.neogen")
+		end,
+	},
 
-  -- Neogen: generate doc comment skeletons (Rustdoc / JSDoc / Doxygen / KDoc)
-  {
-    "danymat/neogen",
-    dependencies = { "nvim-treesitter/nvim-treesitter" },
-    cmd          = "Neogen",
-    config       = function() require("romanov.plugins.neogen") end,
-  },
+	-- Undotree: visual branching undo history
+	{
+		"mbbill/undotree",
+		cmd = "UndotreeToggle",
+		config = function()
+			require("romanov.plugins.undotree")
+		end,
+	},
 
-  -- Undotree: visual branching undo history
-  {
-    "mbbill/undotree",
-    cmd    = "UndotreeToggle",
-    config = function() require("romanov.plugins.undotree") end,
-  },
+	-- vim-illuminate: highlight all occurrences of word under cursor
+	-- Zero config — just shows you where else a symbol is used in the buffer
+	{
+		"RRethy/vim-illuminate",
+		event = { "BufReadPre", "BufNewFile" },
+		config = function()
+			require("illuminate").configure({
+				delay = 120,
+				filetypes_denylist = { "NvimTree", "alpha", "lazy", "mason", "TelescopePrompt" },
+			})
+		end,
+	},
 
-  -- vim-illuminate: highlight all occurrences of word under cursor
-  -- Zero config — just shows you where else a symbol is used in the buffer
-  {
-    "RRethy/vim-illuminate",
-    event  = { "BufReadPre", "BufNewFile" },
-    config = function()
-      require("illuminate").configure({
-        delay       = 120,
-        filetypes_denylist = { "NvimTree", "alpha", "lazy", "mason", "TelescopePrompt" },
-      })
-    end,
-  },
+	-- Mermaid diagrams: inline terminal-graphics rendering (diagram.nvim)
+	-- Works locally and, in principle, over SSH too — see plugins/diagram.lua
+	-- for the full explanation of when it does/doesn't work remotely.
+	{
+		"3rd/image.nvim",
+		-- backend = "kitty" needs no external binary at all (pure protocol),
+		-- which is the most SSH/tmux-friendly option of the available backends.
+		-- The plugin ships a rockspec that lazy.nvim auto-builds via luarocks/
+		-- hererocks by default; that's disabled globally below (rocks.enabled)
+		-- because hererocks fails to compile Lua 5.1 on Debian servers without
+		-- full build toolchains and then retries on every single startup.
+		opts = {
+			backend = "kitty",
+			max_width_window_percentage = 80,
+			max_height_window_percentage = 60,
+			window_overlap_clear_enabled = true,
+		},
+	},
+	{
+		"3rd/diagram.nvim",
+		ft = { "markdown" },
+		dependencies = { "3rd/image.nvim" },
+		config = function()
+			require("romanov.plugins.diagram")
+		end,
+	},
 
-  -- Mermaid diagrams: inline terminal-graphics rendering (diagram.nvim)
-  -- Works locally and, in principle, over SSH too — see plugins/diagram.lua
-  -- for the full explanation of when it does/doesn't work remotely.
-  {
-    "3rd/image.nvim",
-    -- backend = "kitty" needs no external binary at all (pure protocol),
-    -- which is the most SSH/tmux-friendly option of the available backends.
-    -- The plugin ships a rockspec that lazy.nvim auto-builds via luarocks/
-    -- hererocks by default; that's disabled globally below (rocks.enabled)
-    -- because hererocks fails to compile Lua 5.1 on Debian servers without
-    -- full build toolchains and then retries on every single startup.
-    opts = {
-      backend = "kitty",
-      max_width_window_percentage  = 80,
-      max_height_window_percentage = 60,
-      window_overlap_clear_enabled = true,
-    },
-  },
-  {
-    "3rd/diagram.nvim",
-    ft           = { "markdown" },
-    dependencies = { "3rd/image.nvim" },
-    config       = function() require("romanov.plugins.diagram") end,
-  },
-
-  -- Mermaid diagrams: reliable browser-based fallback (always works,
-  -- locally or over SSH with port forwarding — see plugins/markdown-preview.lua)
-  {
-    "selimacerbas/markdown-preview.nvim",
-    ft           = { "markdown" },
-    dependencies = { "selimacerbas/live-server.nvim" },
-    config       = function() require("romanov.plugins.markdown-preview") end,
-  },
-
+	-- Mermaid diagrams: reliable browser-based fallback (always works,
+	-- locally or over SSH with port forwarding — see plugins/markdown-preview.lua)
+	{
+		"selimacerbas/markdown-preview.nvim",
+		ft = { "markdown" },
+		dependencies = { "selimacerbas/live-server.nvim" },
+		config = function()
+			require("romanov.plugins.markdown-preview")
+		end,
+	},
 }, {
-  ui = { border = "rounded" },
-  performance = {
-    rtp = { disabled_plugins = { "gzip", "tarPlugin", "tohtml", "tutor", "zipPlugin" } },
-  },
-  -- Disable rockspec/luarocks auto-build globally. image.nvim is the only
-  -- plugin in this config that ships a *.rockspec (for an optional magick
-  -- image processor); we use the kitty backend instead, which needs no
-  -- external image library at all. Without this, lazy.nvim tries to build
-  -- via hererocks (compiling Lua 5.1 from source) on every plugin sync,
-  -- which reliably fails on Debian servers lacking full build toolchains
-  -- and then retries on every nvim startup ("Too many rounds of missing
-  -- plugins"). Setting rocks.enabled = false skips rockspec builds entirely
-  -- and is safe since nothing else in this config needs a luarocks package.
-  rocks = {
-    enabled = false,
-  },
+	ui = { border = "rounded" },
+	performance = {
+		rtp = { disabled_plugins = { "gzip", "tarPlugin", "tohtml", "tutor", "zipPlugin" } },
+	},
+	-- Disable rockspec/luarocks auto-build globally. image.nvim is the only
+	-- plugin in this config that ships a *.rockspec (for an optional magick
+	-- image processor); we use the kitty backend instead, which needs no
+	-- external image library at all. Without this, lazy.nvim tries to build
+	-- via hererocks (compiling Lua 5.1 from source) on every plugin sync,
+	-- which reliably fails on Debian servers lacking full build toolchains
+	-- and then retries on every nvim startup ("Too many rounds of missing
+	-- plugins"). Setting rocks.enabled = false skips rockspec builds entirely
+	-- and is safe since nothing else in this config needs a luarocks package.
+	rocks = {
+		enabled = false,
+	},
 })
